@@ -210,7 +210,7 @@ class Pynliner(object):
         # build up a property list for every styled element
         for rule in rules:
             # select elements for every selector
-            selectors = rule.selectorText.split(',')
+            selectors = map(lambda s: s.strip(), rule.selectorText.split(','))
             elements = []
             for selector in selectors:
                 elements += select(self.soup, selector)
