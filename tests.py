@@ -126,6 +126,16 @@ class Basic(unittest.TestCase):
         output = Pynliner(allow_conditional_comments=True).from_string(html).run()
         self.assertEqual(output, expected)
 
+    def test_multiline_conditional_comments(self):
+        html = """<!--[if condition]>
+    <p>special</p>
+<![endif]-->"""
+        expected = """<!--[if condition]>
+    <p>special</p>
+<![endif]-->"""
+        output = Pynliner(allow_conditional_comments=True).from_string(html).run()
+        self.assertEqual(output, expected)
+
 
 class ExternalStyles(unittest.TestCase):
     def setUp(self):
