@@ -254,7 +254,7 @@ class Pynliner(object):
         """Clean up after BeautifulSoup's output.
         """
         if self.allow_conditional_comments:
-            matches = re.finditer('(<!--\[if .+\].+?&lt;!\[endif\]-->)', self.output)
+            matches = re.finditer('(<!--\[if .+\].+?&lt;!\[endif\]-->)', self.output, re.S)
             for match in matches:
                 comment = match.group()
                 comment = comment.replace('&gt;', '>')
