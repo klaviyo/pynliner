@@ -36,9 +36,8 @@ import re
 import urlparse
 import urllib2
 import cssutils
-from BeautifulSoup import BeautifulSoup, Comment
+from BeautifulSoup import BeautifulSoup, Tag, Comment
 from soupselect import select
-
 
 class Pynliner(object):
     """Pynliner class"""
@@ -48,11 +47,12 @@ class Pynliner(object):
     stylesheet = False
     output = False
 
-    def __init__(self, log=None, allow_conditional_comments=False):
+    def __init__(self, log=None, allow_conditional_comments=False, preserve_media_queries=False):
         self.log = log
         cssutils.log.enabled = False if log is None else True
         self.extra_style_strings = []
         self.allow_conditional_comments = allow_conditional_comments
+        self.preserve_media_queries = preserve_media_queries
         self.root_url = None
         self.relative_url = None
 
@@ -179,10 +179,37 @@ class Pynliner(object):
         else:
             self.style_string += u'\n'
 
+        # Parse out the media queries and save them in one style block.
+        if self.preserve_media_queries:
+            css_parser = cssutils.CSSParser(log=self.log)
+
         style_tags = self.soup.findAll('style')
         for tag in style_tags:
-            self.style_string += u'\n'.join(tag.contents) + u'\n'
-            tag.extract()
+            if not self.preserve_media_queries:
+                self.style_string += u'\n'.join(tag.contents) + u'\n'
+                tag.extract()
+            else:
+                stylesheet = css_parser.parseString('\n'.join(tag.contents))
+                media_stylesheet = cssutils.css.CSSStyleSheet()
+                other_stylesheet = cssutils.css.CSSStyleSheet()
+
+                for rule in stylesheet.cssRules:
+                    if rule.type == cssutils.css.CSSRule.MEDIA_RULE:
+                        media_stylesheet.add(rule)
+                    else:
+                        other_stylesheet.add(rule)
+
+                if media_stylesheet.cssRules:
+                    new_tag = Tag(self.soup, 'style')
+                    for attr_name, attr_value in tag.attrs:
+                        new_tag[attr_name] = attr_value
+                    new_tag.insert(0, u'\n' + media_stylesheet.cssText + u'\n')
+                    tag.replaceWith(new_tag)
+
+                    self.style_string += other_stylesheet.cssText + u'\n'
+                else:
+                    self.style_string += u'\n'.join(tag.contents) + u'\n'
+                    tag.extract()
 
     def _get_specificity_from_list(self, lst):
         """

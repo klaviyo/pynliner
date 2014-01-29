@@ -19,7 +19,7 @@ class Basic(unittest.TestCase):
         """Test 'fromString' constructor"""
         self.assertEqual(self.p.source_string, self.html)
 
-    def test_get_soup(self):
+    def test_get_sohtmlup(self):
         """Test '_get_soup' method"""
         self.p._get_soup()
         self.assertEqual(unicode(self.p.soup), self.html)
@@ -499,6 +499,58 @@ class ComplexSelectors(unittest.TestCase):
         expected = u"""<h1 title="bar">Hello World!</h1>"""
         output = Pynliner().from_string(html).with_cssString(css).run()
         self.assertEqual(output, expected)
+
+
+class MediaQueries(unittest.TestCase):
+
+    def test_media_queries_left_alone(self):
+        html = """<html><head><title>Example</title>
+<style type="text/css">
+@media screen and (min-device-width: 480) { #content { width: 480px; } }
+#content { border: 1px solid black; }
+</style></head><body><div id="content"><h1>Hello world</h1></div></body></html>"""
+        output = Pynliner(preserve_media_queries=True).from_string(html).run()
+
+        self.assertEqual(output, """<html><head><title>Example</title>
+<style type="text/css">
+@media screen and (min-device-width: 480) {
+    #content {
+        width: 480px
+        }
+    }
+</style></head><body><div id="content" style="border: 1px solid black"><h1>Hello world</h1></div></body></html>""")
+
+    def test_media_queries_stripped(self):
+        html = """<html><head><title>Example</title>
+<style type="text/css">
+@media screen and (min-device-width: 480) { #content { width: 480px; } }
+#content { border: 1px solid black; }
+</style></head><body><div id="content"><h1>Hello world</h1></div></body></html>"""
+        output = Pynliner().from_string(html).run()
+
+        self.assertEqual(output, """<html><head><title>Example</title>
+</head><body><div id="content" style="border: 1px solid black"><h1>Hello world</h1></div></body></html>""")
+
+    def test_one_removed_one_stays(self):
+        html = """<html><head><title>Example</title>
+<style type="text/css">
+@media screen and (min-device-width: 480) { #content { width: 480px; } }
+#content { border: 1px solid black; }
+</style>
+<style type="text/css">
+#content { color: blue; }
+</style></head><body><div id="content"><h1>Hello world</h1></div></body></html>"""
+        output = Pynliner(preserve_media_queries=True).from_string(html).run()
+
+        self.assertEqual(output, """<html><head><title>Example</title>
+<style type="text/css">
+@media screen and (min-device-width: 480) {
+    #content {
+        width: 480px
+        }
+    }
+</style>
+</head><body><div id="content" style="border: 1px solid black; color: blue"><h1>Hello world</h1></div></body></html>""")
 
 
 if __name__ == '__main__':
