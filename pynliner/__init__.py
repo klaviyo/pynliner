@@ -47,12 +47,15 @@ class Pynliner(object):
     stylesheet = False
     output = False
 
-    def __init__(self, log=None, allow_conditional_comments=False, preserve_media_queries=False):
+    def __init__(self, log=None, allow_conditional_comments=False,
+        preserve_media_queries=False, preserve_unknown_rules=False):
+
         self.log = log
         cssutils.log.enabled = False if log is None else True
         self.extra_style_strings = []
         self.allow_conditional_comments = allow_conditional_comments
         self.preserve_media_queries = preserve_media_queries
+        self.preserve_unknown_rules = preserve_unknown_rules
         self.root_url = None
         self.relative_url = None
 
@@ -194,7 +197,8 @@ class Pynliner(object):
                 other_stylesheet = cssutils.css.CSSStyleSheet()
 
                 for rule in stylesheet.cssRules:
-                    if rule.type == cssutils.css.CSSRule.MEDIA_RULE:
+                    if rule.type in (cssutils.css.CSSRule.MEDIA_RULE, cssutils.css.CSSRule.FONT_FACE_RULE) or \
+                        (self.preserve_unknown_rules and rule.type == cssutils.css.CSSRule.UNKNOWN_RULE):
                         media_stylesheet.add(rule)
                     else:
                         other_stylesheet.add(rule)
