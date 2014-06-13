@@ -164,6 +164,12 @@ class Pynliner(object):
             self.style_string += u'\n'
 
         link_tags = self.soup.findAll('link', {'rel': 'stylesheet'})
+
+        if not link_tags:
+            return
+
+        css_parser = cssutils.CSSParser(log=self.log)
+
         for tag in link_tags:
             url = tag['href']
 
@@ -171,7 +177,13 @@ class Pynliner(object):
             base_url = self.relative_url or self.root_url
             url = urlparse.urljoin(base_url, url)
 
-            self.style_string += self._get_url(url)
+            content = self._get_url(url)
+
+            # Sanity check. Is this even a CSS stylesheet? If not, then move on.
+            if not css_parser.parseString(content).cssRules:
+                continue
+
+            self.style_string += content
             tag.extract()
 
     def _get_internal_styles(self):
