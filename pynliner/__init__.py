@@ -190,9 +190,9 @@ class Pynliner(object):
         """Gets <style> element styles
         """
         if not self.style_string:
-            self.style_string = ''
+            self.style_string = u''
         else:
-            self.style_string += '\n'
+            self.style_string += u'\n'
 
         # Parse out the media queries and save them in one style block.
         if self.preserve_media_queries:
@@ -201,7 +201,7 @@ class Pynliner(object):
         style_tags = self.soup.findAll('style')
         for tag in style_tags:
             if not self.preserve_media_queries:
-                self.style_string += '\n'.join(tag.contents) + '\n'
+                self.style_string += u'\n'.join(tag.contents) + u'\n'
                 tag.extract()
             else:
                 stylesheet = css_parser.parseString('\n'.join(tag.contents))
@@ -219,12 +219,12 @@ class Pynliner(object):
                     new_tag = Tag(self.soup, 'style')
                     for attr_name, attr_value in tag.attrs:
                         new_tag[attr_name] = attr_value
-                    new_tag.insert(0, '\n' + media_stylesheet.cssText + '\n')
+                    new_tag.insert(0, u'\n' + media_stylesheet.cssText.encode('utf-8') + u'\n')
                     tag.replaceWith(new_tag)
 
-                    self.style_string += other_stylesheet.cssText + '\n'
+                    self.style_string += other_stylesheet.cssText.encode('utf-8') + u'\n'
                 else:
-                    self.style_string += '\n'.join(tag.contents) + '\n'
+                    self.style_string += u'\n'.join(tag.contents) + u'\n'
                     tag.extract()
 
     def _get_specificity_from_list(self, lst):
