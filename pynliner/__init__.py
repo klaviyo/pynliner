@@ -219,10 +219,10 @@ class Pynliner(object):
                     new_tag = Tag(self.soup, 'style')
                     for attr_name, attr_value in tag.attrs:
                         new_tag[attr_name] = attr_value
-                    new_tag.insert(0, u'\n' + media_stylesheet.cssText.encode('utf-8') + u'\n')
+                    new_tag.insert(0, u'\n' + media_stylesheet.cssText.decode('utf-8') + u'\n')
                     tag.replaceWith(new_tag)
 
-                    self.style_string += other_stylesheet.cssText.encode('utf-8') + u'\n'
+                    self.style_string += other_stylesheet.cssText.decode('utf-8') + u'\n'
                 else:
                     self.style_string += u'\n'.join(tag.contents) + u'\n'
                     tag.extract()
