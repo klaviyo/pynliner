@@ -190,9 +190,9 @@ class Pynliner(object):
         """Gets <style> element styles
         """
         if not self.style_string:
-            self.style_string = u''
+            self.style_string = ''
         else:
-            self.style_string += u'\n'
+            self.style_string += '\n'
 
         # Parse out the media queries and save them in one style block.
         if self.preserve_media_queries:
@@ -201,7 +201,7 @@ class Pynliner(object):
         style_tags = self.soup.findAll('style')
         for tag in style_tags:
             if not self.preserve_media_queries:
-                self.style_string += u'\n'.join(tag.contents) + u'\n'
+                self.style_string += '\n'.join(tag.contents) + '\n'
                 tag.extract()
             else:
                 stylesheet = css_parser.parseString('\n'.join(tag.contents))

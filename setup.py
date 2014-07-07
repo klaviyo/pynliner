@@ -4,7 +4,7 @@
 from setuptools import setup
 
 setup(name='pynliner',
-      version='0.5.1.4',
+      version='0.5.1.5',
       description='Python CSS-to-inline-styles conversion tool for HTML using'
                   ' BeautifulSoup and cssutils',
       author='Tanner Netterville',
