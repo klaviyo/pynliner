@@ -18,6 +18,11 @@ import re
 import BeautifulSoup
 
 attribute_regex = re.compile('\[(?P<attribute>\w+)(?P<operator>[=~\|\^\$\*]?)=?["\']?(?P<value>[^\]"]*)["\']?\]')
+
+# Taken from http://www.w3.org/TR/CSS2/grammar.html#scanner and
+# http://stackoverflow.com/questions/9329552/explain-regex-that-finds-css-comments
+single_line_comment_regex = re.compile('\/\*[^*]*\*+([^/*][^*]*\*+)*\/')
+
 pseudo_classes_regexes = (
     re.compile(':(first-child)'),
     re.compile(':(last-child)')
@@ -91,6 +96,10 @@ def select(soup, selector):
     soup should be a BeautifulSoup instance; selector is a CSS selector 
     specifying the elements you want to retrieve.
     """
+
+    # Strip out any comments.
+    selector = single_line_comment_regex.sub('', selector).strip()
+
     handle_token = True
     current_context = [(soup, [])]
     operator = None
