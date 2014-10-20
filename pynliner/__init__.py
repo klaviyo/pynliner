@@ -30,7 +30,7 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
 
-__version__ = "0.5.1.1"
+__version__ = "0.5.1.9"
 
 import re
 import urlparse
@@ -38,6 +38,12 @@ import urllib2
 import cssutils
 from BeautifulSoup import BeautifulSoup, Tag, Comment
 from soupselect import select
+
+_CSS_RULE_TYPES_TO_PRESERVE = (
+    cssutils.css.CSSRule.MEDIA_RULE,
+    cssutils.css.CSSRule.IMPORT_RULE,
+    cssutils.css.CSSRule.FONT_FACE_RULE,
+)
 
 class Pynliner(object):
     """Pynliner class"""
@@ -209,7 +215,7 @@ class Pynliner(object):
                 other_stylesheet = cssutils.css.CSSStyleSheet()
 
                 for rule in stylesheet.cssRules:
-                    if rule.type in (cssutils.css.CSSRule.MEDIA_RULE, cssutils.css.CSSRule.FONT_FACE_RULE) or \
+                    if rule.type in _CSS_RULE_TYPES_TO_PRESERVE or \
                         (self.preserve_unknown_rules and rule.type == cssutils.css.CSSRule.UNKNOWN_RULE):
                         media_stylesheet.add(rule)
                     else:
