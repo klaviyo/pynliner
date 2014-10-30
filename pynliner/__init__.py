@@ -30,7 +30,7 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
 
-__version__ = "0.5.1.9"
+__version__ = "0.5.1.10"
 
 import re
 import urlparse
@@ -124,7 +124,12 @@ class Pynliner(object):
             self._get_soup()
         if not self.stylesheet:
             self._get_styles()
+
+        previous_spacer = cssutils.ser.prefs.propertyNameSpacer
+        cssutils.ser.prefs.propertyNameSpacer = u''
         self._apply_styles()
+        cssutils.ser.prefs.propertyNameSpacer = previous_spacer
+
         self._get_output()
         self._clean_output()
         return self.output
@@ -287,9 +292,9 @@ class Pynliner(object):
         # apply rules to elements
         for elem, style_declaration in elem_style_map.items():
             if elem.has_key('style'):
-                elem['style'] = u'%s; %s' % (style_declaration.cssText.replace('\n', ' '), elem['style'])
+                elem['style'] = u'%s;%s' % (style_declaration.cssText.replace('\n', ''), elem['style'])
             else:
-                elem['style'] = style_declaration.cssText.replace('\n', ' ')
+                elem['style'] = style_declaration.cssText.replace('\n', '')
         
     def _get_output(self):
         """Generate Unicode string of `self.soup` and set it to `self.output`
