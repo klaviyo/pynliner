@@ -30,14 +30,14 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
 
-__version__ = "0.5.1.10"
+__version__ = "0.5.1.11"
 
 import re
 import urlparse
 import urllib2
 import cssutils
 from BeautifulSoup import BeautifulSoup, Tag, Comment
-from soupselect import select
+from soupselect import select, SelectorNotSupportedException
 
 _CSS_RULE_TYPES_TO_PRESERVE = (
     cssutils.css.CSSRule.MEDIA_RULE,

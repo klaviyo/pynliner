@@ -17,6 +17,9 @@ patched to support multiple class selectors here http://code.google.com/p/soupse
 import re
 import BeautifulSoup
 
+class SelectorNotSupportedException(Exception):
+    pass
+
 attribute_regex = re.compile('\[(?P<attribute>\w+)(?P<operator>[=~\|\^\$\*]?)=?["\']?(?P<value>[^\]"]*)["\']?\]')
 
 # Taken from http://www.w3.org/TR/CSS2/grammar.html#scanner and
@@ -109,7 +112,7 @@ def select(soup, selector):
             handle_token = False
             match = re.search('([_0-9a-zA-Z-#.:*"\'\[\\]=]+)$', selector)
             if not match:
-                raise Exception("No match was found. We're done or something is broken")
+                raise SelectorNotSupportedException(selector)
             token = match.groups(1)[0]
 
             # remove this token from the selector
