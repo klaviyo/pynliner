@@ -53,8 +53,11 @@ class Pynliner(object):
     stylesheet = False
     output = False
 
-    def __init__(self, log=None, allow_conditional_comments=False,
-        preserve_media_queries=False, preserve_unknown_rules=False):
+    def __init__(self, log=None,
+        allow_conditional_comments=False,
+        preserve_media_queries=False,
+        preserve_unknown_rules=False,
+        ingore_unsupported_selectors=False):
 
         self.log = log
         cssutils.log.enabled = False if log is None else True
@@ -62,6 +65,8 @@ class Pynliner(object):
         self.allow_conditional_comments = allow_conditional_comments
         self.preserve_media_queries = preserve_media_queries
         self.preserve_unknown_rules = preserve_unknown_rules
+        self.ingore_unsupported_selectors = ingore_unsupported_selectors
+
         self.root_url = None
         self.relative_url = None
 
@@ -266,8 +271,16 @@ class Pynliner(object):
             # select elements for every selector
             selectors = map(lambda s: s.strip(), rule.selectorText.split(','))
             elements = []
+
             for selector in selectors:
-                elements += select(self.soup, selector)
+                try:
+                    elements += select(self.soup, selector)
+                except SelectorNotSupportedException, ex:
+                    if self.ingore_unsupported_selectors:
+                        pass
+                    else:
+                        raise
+
             # build prop_list for each selected element
             for elem in elements:
                 if elem not in elem_prop_map:
