@@ -30,7 +30,7 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
 
-__version__ = "0.5.1.11"
+__version__ = "0.5.1.12"
 
 import re
 import urlparse
@@ -216,11 +216,13 @@ class Pynliner(object):
 
         style_tags = self.soup.findAll('style')
         for tag in style_tags:
+            strings_and_comments = filter(lambda c: isinstance(c, basestring), tag.contents)
+
             if not self.preserve_media_queries:
-                self.style_string += u'\n'.join(tag.contents) + u'\n'
+                self.style_string += u'\n'.join(strings_and_comments) + u'\n'
                 tag.extract()
             else:
-                stylesheet = css_parser.parseString('\n'.join(tag.contents))
+                stylesheet = css_parser.parseString('\n'.join(strings_and_comments))
                 media_stylesheet = cssutils.css.CSSStyleSheet()
                 other_stylesheet = cssutils.css.CSSStyleSheet()
 
@@ -240,7 +242,7 @@ class Pynliner(object):
 
                     self.style_string += other_stylesheet.cssText.decode('utf-8') + u'\n'
                 else:
-                    self.style_string += u'\n'.join(tag.contents) + u'\n'
+                    self.style_string += u'\n'.join(strings_and_comments) + u'\n'
                     tag.extract()
 
     def _get_specificity_from_list(self, lst):
