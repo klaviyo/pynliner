@@ -346,7 +346,7 @@ class ComplexSelectors(unittest.TestCase):
     def test_unknown_pseudo_selector(self):
         html = """<h1><span>Hello World!</span><p>foo</p><div class="barclass"><span>baz</span>bar</div></h1>"""
         css = """h1 > span:css4-selector { color: red; }"""
-        expected = u"""<h1><span>Hello World!</span><p>foo</p><div class="barclass"><span>baz</span>bar</div></h1>"""
+        expected = u"""<h1><span style="color:red">Hello World!</span><p>foo</p><div class="barclass"><span>baz</span>bar</div></h1>"""
         output = Pynliner().from_string(html).with_cssString(css).run()
         self.assertEqual(output, expected)
 
