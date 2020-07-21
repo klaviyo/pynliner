@@ -3,10 +3,14 @@
 
 import unittest
 import pynliner
-import StringIO
 import logging
 import cssutils
 import mock
+
+try:
+    from StringIO import StringIO  # for Python 2
+except ImportError:
+    from io import StringIO  # for Python 3
 
 
 from pynliner import Pynliner
