@@ -309,7 +309,7 @@ class Pynliner(object):
 
         # apply rules to elements
         for elem, style_declaration in elem_style_map.items():
-            if 'style' in elem:
+            if 'style' in elem.attrs:
                 elem['style'] = u'%s;%s' % (style_declaration.cssText.replace('\n', ''), elem['style'])
             else:
                 elem['style'] = style_declaration.cssText.replace('\n', '')

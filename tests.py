@@ -6,6 +6,7 @@ import pynliner
 import logging
 import cssutils
 import mock
+import six
 
 try:
     from StringIO import StringIO  # for Python 2
@@ -28,14 +29,14 @@ class Basic(unittest.TestCase):
     def test_get_sohtmlup(self):
         """Test '_get_soup' method"""
         self.p._get_soup()
-        self.assertEqual(unicode(self.p.soup), self.html)
+        self.assertEqual(six.text_type(self.p.soup), self.html)
 
     def test_get_styles(self):
         """Test '_get_styles' method"""
         self.p._get_soup()
         self.p._get_styles()
         self.assertEqual(self.p.style_string, u'h1 { color: #ffcc00; }\n')
-        self.assertEqual(unicode(self.p.soup), u'<h1>Hello World!</h1>')
+        self.assertEqual(six.text_type(self.p.soup), u'<h1>Hello World!</h1>')
 
     def test_apply_styles(self):
         """Test '_apply_styles' method"""
@@ -193,21 +194,21 @@ class CommaSelector(unittest.TestCase):
     def test_get_soup(self):
         """Test '_get_soup' method"""
         self.p._get_soup()
-        self.assertEqual(unicode(self.p.soup), self.html)
+        self.assertEqual(six.text_type(self.p.soup), self.html)
 
     def test_get_styles(self):
         """Test '_get_styles' method"""
         self.p._get_soup()
         self.p._get_styles()
         self.assertEqual(self.p.style_string, u'.b1,.b2 { font-weight:bold; } .c {color: red}\n')
-        self.assertEqual(unicode(self.p.soup), u'<span class="b1">Bold</span><span class="b2 c">Bold Red</span>')
+        self.assertEqual(six.text_type(self.p.soup), u'<span class="b1">Bold</span><span class="b2 c">Bold Red</span>')
 
     def test_apply_styles(self):
         """Test '_apply_styles' method"""
         self.p._get_soup()
         self.p._get_styles()
         self.p._apply_styles()
-        self.assertEqual(unicode(self.p.soup), u'<span class="b1" style="font-weight: bold">Bold</span><span class="b2 c" style="color: red;font-weight: bold">Bold Red</span>')
+        self.assertEqual(six.text_type(self.p.soup), u'<span class="b1" style="font-weight: bold">Bold</span><span class="b2 c" style="color: red;font-weight: bold">Bold Red</span>')
 
     def test_run(self):
         """Test 'run' method"""
@@ -264,7 +265,7 @@ class LogOptions(unittest.TestCase):
         self.log = logging.getLogger('testlog')
         self.log.setLevel(logging.DEBUG)
 
-        self.logstream = StringIO.StringIO()
+        self.logstream = StringIO()
         handler = logging.StreamHandler(self.logstream)
         log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         formatter = logging.Formatter(log_format)
