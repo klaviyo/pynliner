@@ -13,6 +13,7 @@ setup(name='pynliner',
       install_requires=[
           'beautifulsoup4 == 4.9.1',
           'cssutils >=0.9.7',
-          'mock'
+          'six==1.15.0',
+          'mock',
       ],
       provides=['pynliner'])

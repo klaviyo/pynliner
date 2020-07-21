@@ -30,14 +30,17 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
 
+from __future__ import absolute_import
+import six
+from six.moves import map
 __version__ = "0.5.1.12"
 
 import re
-import urlparse
-import urllib2
+import six.moves.urllib.parse
+import six.moves.urllib.request, six.moves.urllib.error, six.moves.urllib.parse
 import cssutils
 from bs4 import BeautifulSoup, Tag
-from soupselect import select, SelectorNotSupportedException
+from .soupselect import select, SelectorNotSupportedException
 
 _CSS_RULE_TYPES_TO_PRESERVE = (
     cssutils.css.CSSRule.MEDIA_RULE,
@@ -142,7 +145,7 @@ class Pynliner(object):
     def _get_url(self, url):
         """Returns the response content from the given url
         """
-        return urllib2.urlopen(url).read()
+        return six.moves.urllib.request.urlopen(url).read()
 
     def _get_soup(self):
         """Convert source string to BeautifulSoup object. Sets it to self.soup.
@@ -191,7 +194,7 @@ class Pynliner(object):
 
             # Convert the relative URL to an absolute URL ready to pass to urllib
             base_url = self.relative_url or self.root_url
-            url = urlparse.urljoin(base_url, url)
+            url = six.moves.urllib.parse.urljoin(base_url, url)
 
             content = self._get_url(url)
 
@@ -216,7 +219,7 @@ class Pynliner(object):
 
         style_tags = self.soup.findAll('style')
         for tag in style_tags:
-            strings_and_comments = filter(lambda c: isinstance(c, basestring), tag.contents)
+            strings_and_comments = [c for c in tag.contents if isinstance(c, six.string_types)]
 
             if not self.preserve_media_queries:
                 self.style_string += u'\n'.join(strings_and_comments) + u'\n'
@@ -235,7 +238,7 @@ class Pynliner(object):
 
                 if media_stylesheet.cssRules:
                     new_tag = Tag(builder=self.soup.builder, name='style')
-                    for attr_name, attr_value in tag.attrs.iteritems():
+                    for attr_name, attr_value in six.iteritems(tag.attrs):
                         new_tag[attr_name] = attr_value
                     new_tag.insert(0, u'\n' + media_stylesheet.cssText.decode('utf-8') + u'\n')
                     tag.replaceWith(new_tag)
@@ -271,13 +274,13 @@ class Pynliner(object):
         # build up a property list for every styled element
         for rule in rules:
             # select elements for every selector
-            selectors = map(lambda s: s.strip(), rule.selectorText.split(','))
+            selectors = [s.strip() for s in rule.selectorText.split(',')]
             elements = []
 
             for selector in selectors:
                 try:
                     elements += select(self.soup, selector)
-                except SelectorNotSupportedException, ex:
+                except SelectorNotSupportedException as ex:
                     if self.ingore_unsupported_selectors:
                         pass
                     else:
@@ -299,14 +302,14 @@ class Pynliner(object):
             # ascending sort of prop_lists based on specificity
             props = sorted(props, key=lambda p: p['specificity'])
             # for each prop_list, apply to CSSStyleDeclaration
-            for prop_list in map(lambda obj: obj['props'], props):
+            for prop_list in [obj['props'] for obj in props]:
                 for prop in prop_list:
                     elem_style_map[elem][prop.name] = prop.value
 
 
         # apply rules to elements
         for elem, style_declaration in elem_style_map.items():
-            if elem.has_key('style'):
+            if 'style' in elem:
                 elem['style'] = u'%s;%s' % (style_declaration.cssText.replace('\n', ''), elem['style'])
             else:
                 elem['style'] = style_declaration.cssText.replace('\n', '')
@@ -316,7 +319,7 @@ class Pynliner(object):
 
         Returns self.output
         """
-        self.output = unicode(self.soup)
+        self.output = six.text_type(self.soup)
         return self.output
     
     def _clean_output(self):

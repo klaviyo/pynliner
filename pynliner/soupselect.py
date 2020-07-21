@@ -14,6 +14,7 @@ select(soup, 'div#main ul a')
 
 patched to support multiple class selectors here http://code.google.com/p/soupselect/issues/detail?id=4#c0
 """
+from __future__ import absolute_import
 import re
 from bs4 import NavigableString, Comment
 
@@ -49,7 +50,7 @@ def get_attribute_checker(operator, attribute, value=''):
         # attribute is either exactly value or starts with value-
         '|': lambda el: el.get(attribute, '') == value \
             or el.get(attribute, '').startswith('%s-' % value),
-    }.get(operator, lambda el: el.has_key(attribute))
+    }.get(operator, lambda el: attribute in el)
 
 def is_white_space(el):
     if isinstance(el, NavigableString) and str(el).strip() == '':
