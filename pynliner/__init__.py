@@ -33,7 +33,7 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from __future__ import absolute_import
 import six
 from six.moves import map
-__version__ = "0.5.1.12"
+__version__ = "0.5.1.13"
 
 import re
 import six.moves.urllib.parse
