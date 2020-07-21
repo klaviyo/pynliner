@@ -51,4 +51,4 @@ jobs:
         pip install -e .
     - name: Test with pytest
       run: |
-        pytest --cov-report=xml --cov=pynliner tests
+        pytest --cov-report=xml --cov=pynliner tests.py
