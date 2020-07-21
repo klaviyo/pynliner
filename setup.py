@@ -11,7 +11,7 @@ setup(name='pynliner',
       author_email='tannern@gmail.com',
       packages=['pynliner'],
       install_requires=[
-          'BeautifulSoup >=3.2.1,<4.0',
+          'beautifulsoup4 == 4.9.1',
           'cssutils >=0.9.7',
           'mock'
       ],

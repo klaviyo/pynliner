@@ -36,7 +36,7 @@ import re
 import urlparse
 import urllib2
 import cssutils
-from BeautifulSoup import BeautifulSoup, Tag, Comment
+from bs4 import BeautifulSoup, Tag
 from soupselect import select, SelectorNotSupportedException
 
 _CSS_RULE_TYPES_TO_PRESERVE = (
@@ -234,8 +234,8 @@ class Pynliner(object):
                         other_stylesheet.add(rule)
 
                 if media_stylesheet.cssRules:
-                    new_tag = Tag(self.soup, 'style')
-                    for attr_name, attr_value in tag.attrs:
+                    new_tag = Tag(builder=self.soup.builder, name='style')
+                    for attr_name, attr_value in tag.attrs.iteritems():
                         new_tag[attr_name] = attr_value
                     new_tag.insert(0, u'\n' + media_stylesheet.cssText.decode('utf-8') + u'\n')
                     tag.replaceWith(new_tag)

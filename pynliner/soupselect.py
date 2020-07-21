@@ -15,7 +15,7 @@ select(soup, 'div#main ul a')
 patched to support multiple class selectors here http://code.google.com/p/soupselect/issues/detail?id=4#c0
 """
 import re
-import BeautifulSoup
+from bs4 import NavigableString, Comment
 
 class SelectorNotSupportedException(Exception):
     pass
@@ -52,9 +52,9 @@ def get_attribute_checker(operator, attribute, value=''):
     }.get(operator, lambda el: el.has_key(attribute))
 
 def is_white_space(el):
-    if isinstance(el, BeautifulSoup.NavigableString) and str(el).strip() == '':
+    if isinstance(el, NavigableString) and str(el).strip() == '':
         return True
-    if isinstance(el, BeautifulSoup.Comment):
+    if isinstance(el, Comment):
         return True
     return False
 
