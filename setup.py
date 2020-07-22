@@ -3,7 +3,7 @@
 
 from setuptools import setup
 
-setup(name='pynliner',
+setup(name='pynliner-klaviyo',
       version='0.5.1.13',
       description='Python CSS-to-inline-styles conversion tool for HTML using'
                   ' BeautifulSoup and cssutils',
