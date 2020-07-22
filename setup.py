@@ -15,5 +15,4 @@ setup(name='pynliner-klaviyo',
           'cssutils >=0.9.7',
           'six==1.15.0',
           'mock',
-      ],
-      provides=['pynliner'])
+      ])
