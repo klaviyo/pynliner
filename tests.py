@@ -193,6 +193,18 @@ class ExternalStyles(unittest.TestCase):
         output = Pynliner().from_string(html).run()
         self.assertEqual(desired_output, output)
 
+    def test_with_special_characters(self):
+        html = '<style>div { color: black }</style><div>&gt;&gt;&gt;&gt;</div><div></div>'
+        desired_output = '<div style="color:black">&gt;&gt;&gt;&gt;</div><div style="color:black"></div>'
+        output = Pynliner().from_string(html).run()
+        self.assertEqual(desired_output, output)
+
+    def test_nested_equivlent_elements(self):
+        html = '<style>div { color: black }</style><div><div></div></div>'
+        desired_output = '<div style="color:black"><div style="color:black"></div></div>'
+        output = Pynliner().from_string(html).run()
+        self.assertEqual(desired_output, output)
+
 
 class CommaSelector(unittest.TestCase):
     def setUp(self):
