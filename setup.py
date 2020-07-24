@@ -14,7 +14,7 @@ setup(name='pynliner-klaviyo',
           'beautifulsoup4 >= 4.3.0, < 5',
           'cssutils >=0.9.7',
           'six==1.15.0',
-          'lxml >=3, <4',
+          'lxml',
           'mock',
       ],
       provides=['pynliner'])
