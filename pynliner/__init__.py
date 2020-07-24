@@ -151,7 +151,7 @@ class Pynliner(object):
         """
         Convert source string to BeautifulSoup object. Sets it to self.soup.
         """
-        self.soup = BeautifulSoup(self.source_string, 'lxml')
+        self.soup = BeautifulSoup(self.source_string, 'html.parser')
 
     def _get_styles(self):
         """Gets all CSS content from and removes all <link rel="stylesheet"> and
