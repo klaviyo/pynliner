@@ -148,18 +148,10 @@ class Pynliner(object):
         return six.moves.urllib.request.urlopen(url).read()
 
     def _get_soup(self):
-        """Convert source string to BeautifulSoup object. Sets it to self.soup.
-
-        If using mod_wgsi, use html5 parsing to prevent BeautifulSoup
-        incompatibility.
         """
-        # Check if mod_wsgi is running
-        # - see http://code.google.com/p/modwsgi/wiki/TipsAndTricks
-        try:
-            from mod_wsgi import version
-            self.soup = BeautifulSoup(self.source_string, "html5lib")
-        except:
-            self.soup = BeautifulSoup(self.source_string, 'lxml')
+        Convert source string to BeautifulSoup object. Sets it to self.soup.
+        """
+        self.soup = BeautifulSoup(self.source_string, 'lxml')
 
     def _get_styles(self):
         """Gets all CSS content from and removes all <link rel="stylesheet"> and
