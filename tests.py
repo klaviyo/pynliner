@@ -181,6 +181,18 @@ class ExternalStyles(unittest.TestCase):
     def test_external_schemeless_url(self):
         self._test_external_url('//other.com/something/test.css', 'http://other.com/something/test.css')
 
+    def test_duplicate_elements(self):
+        html = '<style>div { color: black }</style><div></div><div></div>'
+        desired_output = '<div style="color:black"></div><div style="color:black"></div>'
+        output = Pynliner().from_string(html).run()
+        self.assertEqual(desired_output, output)
+
+    def test_duplicate_elements_with_uniqe_props(self):
+        html = '<style>div { color: black }</style><div id="d1"></div><div id="d2"></div>'
+        desired_output = '<div id="d1" style="color:black"></div><div id="d2" style="color:black"></div>'
+        output = Pynliner().from_string(html).run()
+        self.assertEqual(desired_output, output)
+
 
 class CommaSelector(unittest.TestCase):
     def setUp(self):
