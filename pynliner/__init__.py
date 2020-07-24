@@ -275,11 +275,12 @@ class Pynliner(object):
         for rule in rules:
             # select elements for every selector
             selectors = [s.strip() for s in rule.selectorText.split(',')]
-            elements = []
+            element_tuples = []  # type List[(Tag, id(Tag))]]
 
             for selector in selectors:
                 try:
-                    elements += select(self.soup, selector)
+                    for elem in select(self.soup, selector):
+                        element_tuples.append((elem, id(elem)))
                 except SelectorNotSupportedException as ex:
                     if self.ingore_unsupported_selectors:
                         pass
@@ -287,28 +288,28 @@ class Pynliner(object):
                         raise
 
             # build prop_list for each selected element
-            for elem in elements:
-                if elem not in elem_prop_map:
-                    elem_prop_map[elem] = []
-                elem_prop_map[elem].append({
+            for element_tuple in element_tuples:
+                if element_tuple not in elem_prop_map:
+                    elem_prop_map[element_tuple] = []
+                elem_prop_map[element_tuple].append({
                     'specificity': self._get_rule_specificity(rule),
                     'props': rule.style.getProperties(),
                 })
 
         # build up another property list using selector specificity
-        for elem, props in elem_prop_map.items():
-            if elem not in elem_style_map:
-                elem_style_map[elem] = cssutils.css.CSSStyleDeclaration()
+        for element_tuple, props in elem_prop_map.items():
+            if element_tuple not in elem_style_map:
+                elem_style_map[element_tuple] = cssutils.css.CSSStyleDeclaration()
             # ascending sort of prop_lists based on specificity
             props = sorted(props, key=lambda p: p['specificity'])
             # for each prop_list, apply to CSSStyleDeclaration
             for prop_list in [obj['props'] for obj in props]:
                 for prop in prop_list:
-                    elem_style_map[elem][prop.name] = prop.value
+                    elem_style_map[element_tuple][prop.name] = prop.value
 
 
         # apply rules to elements
-        for elem, style_declaration in elem_style_map.items():
+        for (elem, _), style_declaration in elem_style_map.items():
             if elem.has_attr('style'):
                 elem['style'] = u'%s;%s' % (style_declaration.cssText.replace('\n', ''), elem['style'])
             else:
