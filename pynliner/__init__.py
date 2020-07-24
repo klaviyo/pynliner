@@ -159,7 +159,7 @@ class Pynliner(object):
             from mod_wsgi import version
             self.soup = BeautifulSoup(self.source_string, "html5lib")
         except:
-            self.soup = BeautifulSoup(self.source_string)
+            self.soup = BeautifulSoup(self.source_string, 'lxml')
 
     def _get_styles(self):
         """Gets all CSS content from and removes all <link rel="stylesheet"> and
