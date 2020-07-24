@@ -235,6 +235,17 @@ class CommaSelector(unittest.TestCase):
         output = Pynliner().from_string(html).run()
         self.assertEqual(output, desired_output)
 
+    def test_duplicate_elements(self):
+        html = '<style>div { color: black }</style><div></div><div></div>'
+        desired_output = '<div style="color:black"></div><div style="color:black"></div>'
+        output = Pynliner().from_string(html).run()
+        self.assertEqual(desired_output, output)
+
+    def test_duplicate_elements_with_uniqe_props(self):
+        html = '<style>div { color: black }</style><div id="d1"></div><div id="d2"></div>'
+        desired_output = '<div id="d1" style="color:black"></div><div id="d2" style="color:black"></div>'
+        output = Pynliner().from_string(html).run()
+        self.assertEqual(desired_output, output)
 
 class Extended(unittest.TestCase):
     def test_overwrite(self):
